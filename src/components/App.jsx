@@ -5,6 +5,7 @@ import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
+import FinishScreen from "./FinishScreen";
 
 const initialState = {
   questions: [],
@@ -12,7 +13,11 @@ const initialState = {
   index: 0,
   answer: null,
   points: 0,
+  highScore: 0,
+  timesRemaining: 10,
 };
+
+const SECS_TIMER = 30;
 
 function reducer(state, action) {
   switch (action.type) {
@@ -21,7 +26,11 @@ function reducer(state, action) {
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
-      return { ...state, status: "active" };
+      return {
+        ...state,
+        status: "active",
+        timesRemaining: state.questions.length * SECS_TIMER,
+      };
     case "answerCompleted":
       const question = state.questions.at(state.index);
       return {
@@ -34,6 +43,25 @@ function reducer(state, action) {
       };
     case "nextQuestion":
       return { ...state, index: state.index + 1, answer: null };
+    case "finishQuestion":
+      return {
+        ...state,
+        status: "finished",
+        highScore:
+          state.points > state.highScore ? state.points : state.highScore,
+      };
+    case "restart":
+      return {
+        ...initialState,
+        questions: state.questions,
+        status: "ready",
+      };
+    case "timer":
+      return {
+        ...state,
+        timesRemaining: state.timesRemaining - 1,
+        status: state.timesRemaining === 0 ? "finished" : state.status,
+      };
     default:
       throw new Error("invalid action type" + action.type);
   }
@@ -41,7 +69,15 @@ function reducer(state, action) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { questions, status, index, answer, points } = state;
+  const {
+    questions,
+    status,
+    index,
+    answer,
+    points,
+    highScore,
+    timesRemaining,
+  } = state;
 
   const numQuestions = questions.length;
   const maxPoints = questions.reduce(
@@ -74,6 +110,16 @@ function App() {
             index={index}
             maxPoints={maxPoints}
             points={points}
+            timesRemaining={timesRemaining}
+          />
+        )}
+
+        {status === "finished" && (
+          <FinishScreen
+            points={points}
+            maxPoints={maxPoints}
+            highScore={highScore}
+            dispatch={dispatch}
           />
         )}
       </Main>

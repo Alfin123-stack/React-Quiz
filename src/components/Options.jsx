@@ -1,6 +1,15 @@
 import NextButton from "./NextButton";
+import Footer from "./Footer";
+import Timer from "./Timers";
 
-function Options({ question, dispatch, answer }) {
+function Options({
+  question,
+  dispatch,
+  answer,
+  numQuestions,
+  index,
+  timesRemaining,
+}) {
   const isAnswer = answer !== null;
   return (
     <div className="options">
@@ -19,8 +28,16 @@ function Options({ question, dispatch, answer }) {
           {option}
         </button>
       ))}
+      <Footer>
+        <Timer dispatch={dispatch} timesRemaining={timesRemaining} />
 
-      <NextButton dispatch={dispatch} answer={answer} />
+        <NextButton
+          dispatch={dispatch}
+          answer={answer}
+          numQuestions={numQuestions}
+          index={index}
+        />
+      </Footer>
     </div>
   );
 }

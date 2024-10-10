@@ -8,6 +8,7 @@ function Question({
   index,
   maxPoints,
   points,
+  timesRemaining,
 }) {
   return (
     <div>
@@ -19,7 +20,14 @@ function Question({
         points={points}
         answer={answer}
       />
-      <Options question={question} dispatch={dispatch} answer={answer} />
+      <Options
+        question={question}
+        dispatch={dispatch}
+        answer={answer}
+        numQuestions={numQuestions}
+        index={index}
+        timesRemaining={timesRemaining}
+      />
     </div>
   );
 }
