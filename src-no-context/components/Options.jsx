@@ -1,12 +1,15 @@
 import NextButton from "./NextButton";
 import Footer from "./Footer";
 import Timer from "./Timers";
-import { useQuiz } from "../contexts/QuizContext";
 
-function Options() {
-  const { index, dispatch, answer, questions } = useQuiz();
-
-  const question = questions[index];
+function Options({
+  question,
+  dispatch,
+  answer,
+  numQuestions,
+  index,
+  timesRemaining,
+}) {
   const isAnswer = answer !== null;
   return (
     <div className="options">
@@ -26,9 +29,14 @@ function Options() {
         </button>
       ))}
       <Footer>
-        <Timer />
+        <Timer dispatch={dispatch} timesRemaining={timesRemaining} />
 
-        <NextButton />
+        <NextButton
+          dispatch={dispatch}
+          answer={answer}
+          numQuestions={numQuestions}
+          index={index}
+        />
       </Footer>
     </div>
   );
